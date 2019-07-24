@@ -3,27 +3,24 @@ package com.plugin.filter
 import com.google.common.collect.Lists
 
 class DoubleClickMethodFilter extends MethodFilter<String> {
-    public static final String TAG = "DoubleClickMethodFilter"
-
+    static final def TAG = "DoubleClickMethodFilter"
+    
     private static def ON_CLICK = "onClick"
 
-    boolean enable
-    ArrayList<String> methodNames = Lists.newArrayList(ON_CLICK)
+    private def enable
+    private def methodNames = Lists.newArrayList(ON_CLICK)
 
-    static DoubleClickMethodFilter create(boolean enable, ArrayList<String> methodNames) {
+    static DoubleClickMethodFilter create(enable, methodNames) {
         def doubleClickMethodFilter = new DoubleClickMethodFilter()
         doubleClickMethodFilter.enable = enable
 
         if (methodNames && methodNames.size() > 0) {
-            doubleClickMethodFilter.methodNames.addAll(methodNames)
+            methodNames.each {
+                doubleClickMethodFilter.methodNames << it
+            }
         }
 
         return doubleClickMethodFilter
-    }
-
-    @Override
-    String tag() {
-        return TAG
     }
 
     @Override

@@ -5,10 +5,8 @@ import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.utils.FileUtils
 import com.google.common.collect.Sets
 import com.plugin.adapter.PluginClassVisitor
-import com.plugin.extention.FilterExtension
 import com.plugin.extention.PluginToolsExtension
 import com.plugin.filter.DoubleClickMethodFilter
-import com.plugin.filter.MethodFilter
 import com.plugin.tools.DoubleClickToolsDump
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
@@ -16,10 +14,10 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 
 class PluginTransform extends Transform {
-    def project
-    def needCreateDoubleClickHookClass
-    def haveCreateDoubleClickHookClass
-    HashMap<String, MethodFilter> filterHashMap = new HashMap<>()
+    private def project
+    private def needCreateDoubleClickHookClass
+    private def haveCreateDoubleClickHookClass
+    private def filterHashMap = new LinkedHashMap<>()
 
     PluginTransform(Project project) {
         this.project = project
@@ -103,7 +101,7 @@ class PluginTransform extends Transform {
 
         //check doubleClickExtension
         if (project != null) {
-            PluginToolsExtension tools = project['tools']
+            def tools = project.tools
             if (tools != null
                     && tools.doubleClickExtension != null
                     && tools.doubleClickExtension.need) {
@@ -115,13 +113,13 @@ class PluginTransform extends Transform {
     }
 
     boolean doubleClickFilter(PluginToolsExtension toolsExtension, File file) {
-        FilterExtension extension = toolsExtension.doubleClickExtension.filter
+        def extension = toolsExtension.doubleClickExtension.filter
         if (extension == null ||
                 ((extension.classNames == null || extension.classNames.size() == 0)
                         && (extension.packageNames == null || extension.packageNames.size() == 0)
                         && (extension.methodNames == null || extension.methodNames.size() == 0))) {
             needCreateDoubleClickHookClass = true
-            filterHashMap.put(DoubleClickMethodFilter.TAG, DoubleClickMethodFilter.create(toolsExtension.doubleClickExtension.need, extension.methodNames))
+            filterHashMap["${DoubleClickMethodFilter.TAG}"] = DoubleClickMethodFilter.create(toolsExtension.doubleClickExtension.need, extension.methodNames)
 
             return true
         } else {

@@ -10,13 +10,13 @@ import org.objectweb.asm.commons.AdviceAdapter
  * method adapter
  */
 class PluginMethodVisitor extends AdviceAdapter {
-    HashMap<String, MethodFilter> filterHashMap
+    private def filterHashMap
 
-    def name
-    def descriptor
+    private def name
+    private def descriptor
 
-    PluginMethodVisitor(HashMap<String, MethodFilter> filterHashMap, int i, MethodVisitor methodVisitor, int i1, String name, String descriptor) {
-        super(i, methodVisitor, i1, name, descriptor)
+    PluginMethodVisitor(LinkedHashMap<String, MethodFilter> filterHashMap, int api, MethodVisitor methodVisitor, int access, String name, String descriptor) {
+        super(api, methodVisitor, access, name, descriptor)
         this.name = name
         this.filterHashMap = filterHashMap
         this.descriptor = descriptor
@@ -25,10 +25,10 @@ class PluginMethodVisitor extends AdviceAdapter {
     @Override
     protected void onMethodEnter() {
         super.onMethodEnter()
-        if (filterHashMap && filterHashMap.size() > 0) {
-            filterHashMap.each {
-                if (it && it.key == DoubleClickMethodFilter.TAG) {
-                    if (it.value.check(name)) {
+        filterHashMap?.each {
+            key, value ->
+                if (key && key == DoubleClickMethodFilter.TAG) {
+                    if (value.check(name)) {
                         mv.visitMethodInsn(INVOKESTATIC, "com/tools/DoubleClickTools", "cannotClick", "()Z", false)
                         Label l1 = new Label()
                         mv.visitJumpInsn(IFEQ, l1)
@@ -36,7 +36,6 @@ class PluginMethodVisitor extends AdviceAdapter {
                         mv.visitLabel(l1)
                     }
                 }
-            }
         }
     }
 }

@@ -7,9 +7,9 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
 class PluginClassVisitor extends ClassVisitor {
-    HashMap<String, MethodFilter> filterHashMap
+    private def filterHashMap
 
-    PluginClassVisitor(HashMap<String, MethodFilter> filterHashMap, int api, ClassVisitor classVisitor) {
+    PluginClassVisitor(LinkedHashMap<String, MethodFilter> filterHashMap, int api, ClassVisitor classVisitor) {
         super(api, classVisitor)
         this.filterHashMap = filterHashMap
     }

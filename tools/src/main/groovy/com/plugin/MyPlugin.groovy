@@ -1,7 +1,6 @@
 package com.plugin
 
 import com.android.build.gradle.AppExtension
-import com.plugin.extention.DoubleClickExtension
 import com.plugin.extention.PluginToolsExtension
 import com.plugin.transform.PluginTransform
 import org.gradle.api.Plugin
